@@ -1,0 +1,18 @@
+
+services:
+  thisservice:
+    image: ${IMAGE}
+    healthcheck:
+      test: [ "CMD-SHELL", "stat /tmp/ready || exit 1" ]
+      interval: 10s
+
+  sut:
+    image: curlimages/curl:latest
+    depends_on:
+      thisservice:
+        condition: service_healthy
+    command: >
+      sh -c "curl --fail http://thisservice:8081/actuator/health/health &&
+             curl --fail http://thisservice:8080/readyz &&
+             curl --fail http://thisservice:8080/livez &&
+             curl --fail http://thisservice:8080/info/version"
