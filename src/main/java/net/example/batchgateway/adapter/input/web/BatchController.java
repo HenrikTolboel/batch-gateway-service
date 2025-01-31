@@ -8,10 +8,13 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import net.example.batchgateway.adapter.input.web.dto.CreateBatchDTO;
 import net.example.batchgateway.adapter.input.web.dto.GenerateDTO;
-import net.example.batchgateway.adapter.input.web.dto.GenerateWithIdDTO;
 import net.example.batchgateway.adapter.input.web.dto.ListRevisionsDTO;
-import net.example.batchgateway.application.domain.model.keymodule.*;
+import net.example.batchgateway.adapter.input.web.dto.ViewBatchDTO;
+import net.example.batchgateway.application.domain.model.Batch;
+import net.example.batchgateway.application.domain.model.BatchId;
+import net.example.batchgateway.application.domain.model.BatchName;
 import net.example.batchgateway.application.domain.model.tenantmodule.TenantId;
 import net.example.batchgateway.application.domain.model.usermodule.UserId;
 import net.example.batchgateway.application.port.DomainError;
@@ -24,7 +27,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -57,11 +59,11 @@ public class BatchController {
         }
     }
 
-    private static Key okmapper(final Optional<Key> optionalKey) {
-        if (optionalKey.isEmpty()) {
+    private static Batch okmapper(final Optional<Batch> optionalBatch) {
+        if (optionalBatch.isEmpty()) {
             throw new ProblemDetailException(HttpStatus.NOT_FOUND, "Key not found", URI.create("info:key-not-found"));
         }
-        return optionalKey.get();
+        return optionalBatch.get();
     }
 
 
@@ -100,15 +102,15 @@ public class BatchController {
     )
     @GetMapping("/{keyId}/listRevisions")
     @JwtAuthorization(acceptNoAuthorizationHeader = true)
-    public ListRevisionsDTO listRevisions(final @PathVariable String keyId) {
+    public ViewBatchDTO listRevisions(final @PathVariable String batchId) {
 
-        final Result<Key, Object> result = queryKeyUseCase.findKeyById(new FindKeyQuery(
+        final Result<Batch, Object> result = queryBatchUseCase.findBatchById(new FindBatchQuery(
                         TenantId.generate(),
                         UserId.generate(),
-                        new KeyId(UUID.fromString(keyId))))
+                        new BatchId(UUID.fromString(batchId))))
                 .biMap(BatchController::okmapper, BatchController::errormapper);
 
-        return ListRevisionsDTO.create(result.expect());
+        return ViewBatchDTO.create(result.expect());
     }
 
 
@@ -154,134 +156,20 @@ public class BatchController {
 //    @PostMapping(params = "xmlType=GenerateDTO")
     @PostMapping
     @JwtAuthorization(acceptNoAuthorizationHeader = true)
-    public ResponseEntity<Object> generate(@RequestBody final GenerateDTO generateDTO) {
+    public ResponseEntity<Object> create(@RequestBody final CreateBatchDTO createBatchDTO) {
 
-        final GenerateKeyCommand command = new GenerateKeyCommand(
-                TenantId.generate(),
-                UserId.generate(),
-                KeyName.create(generateDTO.keyName()),
-                KeyType.create(generateDTO.keyType().keyType()),
-                generateDTO.keyMaterialDetails().toKeyMaterialDetails(),
-                generateDTO.expire(),
-                generateDTO.autoActivate(),
-                generateDTO.autoRotate(),
-                generateDTO.keyLifeCycleDays(),
-                CustomAttributes.fromMap(generateDTO.customAttributes())
+        final CreateBatchCommand command = new CreateBatchCommand(
+                BatchId.generate(),
+                BatchName.create(createBatchDTO.batchName()),
+                TenantId.generate()
         );
 
-        final Result<Key, Object> result = createKeyUseCase.create(command)
+        final Result<Batch, Object> result = createBatchUseCase.create(command)
                 .mapErr(BatchController::errormapper);
 
         return ResponseEntity.created(URI.create(result.expect().getId().value().toString())).build();
     }
 
-    @Operation(
-            summary = "Generate Key",
-            description = "a description given",
-//            parameters = {
-//                    @Parameter(name = "applicationType",
-//                            required = true)
-//            },
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(
-                                    implementation = GenerateWithIdDTO.class
-                            )
-                    ),
-                    required = true
-            ),
-            responses = {
-                    @ApiResponse(responseCode = "201", description = "Key Created",
-                            headers = {
-                                    @Header(name = "Location", description = "Id of created Key")
-                            },
-                            content = {@Content}
-                    ),
-                    @ApiResponse(responseCode = "400", description = "Bad Request",
-                            content = {
-                                    @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
-                                            schema = @Schema(implementation = ProblemDetail.class))
-                            }
 
-                    ),
-                    @ApiResponse(responseCode = "404", description = "Specified Key not found",
-                            content = {
-                                    @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
-                                            schema = @Schema(implementation = ProblemDetail.class))
-                            }
-                    )
-
-            }
-    )
-//    @PostMapping(params = "xmlType=GenerateWithIdDTO")
-    @PostMapping("/withid")
-    @JwtAuthorization(acceptNoAuthorizationHeader = true)
-    public ResponseEntity<Object> generate2(@RequestBody final GenerateWithIdDTO generateDTO) {
-
-        final GenerateKeyWithIdCommand command = new GenerateKeyWithIdCommand(
-                UUID.fromString(generateDTO.id()),
-                TenantId.generate(),
-                UserId.generate(),
-                KeyName.create(generateDTO.keyName()),
-                KeyType.create(generateDTO.keyType().keyType()),
-                generateDTO.keyMaterialDetails().toKeyMaterialDetails(),
-                generateDTO.expire(),
-                generateDTO.autoActivate(),
-                generateDTO.autoRotate(),
-                generateDTO.keyLifeCycleDays(),
-                CustomAttributes.fromMap(generateDTO.customAttributes())
-        );
-
-        final Result<Key, Object> result = createKeyUseCase.create(command)
-                .mapErr(BatchController::errormapper);
-
-        return ResponseEntity.created(URI.create(result.expect().getId().value().toString())).build();
-    }
-
-    @PutMapping("/{keyId}/activate")
-    @JwtAuthorization(acceptNoAuthorizationHeader = true)
-    public ResponseEntity<Object> activate(Authentication authentication, @PathVariable final String keyId) {
-        final ActivateKeyCommand command = new ActivateKeyCommand(
-                TenantId.generate(),
-                UserId.generate(),
-                new KeyId(UUID.fromString(keyId))
-        );
-
-        keyManagementUseCase.activateKey(command)
-                .mapErr(BatchController::errormapper);
-
-        return ResponseEntity.noContent().build();
-    }
-
-    @PutMapping("/{keyId}/deactivate")
-    @JwtAuthorization(acceptNoAuthorizationHeader = true)
-    public ResponseEntity<Object> deactivate(@PathVariable final String keyId) {
-        final DeactivateKeyCommand command = new DeactivateKeyCommand(
-                TenantId.generate(),
-                UserId.generate(),
-                new KeyId(UUID.fromString(keyId))
-        );
-
-        keyManagementUseCase.deactivateKey(command)
-                .mapErr(BatchController::errormapper);
-
-        return ResponseEntity.noContent().build();
-    }
-
-    @PutMapping("/{keyId}/deactivateprevious")
-    @JwtAuthorization(acceptNoAuthorizationHeader = true)
-    public ResponseEntity<Object> deactivateprevious(@PathVariable final String keyId) {
-        final DeactivatePreviousKeyCommand command = new DeactivatePreviousKeyCommand(
-                TenantId.generate(),
-                UserId.generate(),
-                new KeyId(UUID.fromString(keyId))
-        );
-
-        keyManagementUseCase.deactivatePreviousKey(command)
-                .mapErr(BatchController::errormapper);
-
-        return ResponseEntity.noContent().build();
-    }
 
 }
