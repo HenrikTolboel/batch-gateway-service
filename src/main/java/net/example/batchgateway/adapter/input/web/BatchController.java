@@ -11,25 +11,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import net.example.batchgateway.adapter.input.web.dto.GenerateDTO;
 import net.example.batchgateway.adapter.input.web.dto.GenerateWithIdDTO;
 import net.example.batchgateway.adapter.input.web.dto.ListRevisionsDTO;
-import net.example.batchgateway.application.domain.model.keymodule.CustomAttributes;
-import net.example.batchgateway.application.domain.model.keymodule.Key;
-import net.example.batchgateway.application.domain.model.keymodule.KeyId;
-import net.example.batchgateway.application.domain.model.keymodule.KeyName;
-import net.example.batchgateway.application.domain.model.keymodule.KeyType;
+import net.example.batchgateway.application.domain.model.keymodule.*;
 import net.example.batchgateway.application.domain.model.tenantmodule.TenantId;
 import net.example.batchgateway.application.domain.model.usermodule.UserId;
 import net.example.batchgateway.application.port.DomainError;
 import net.example.batchgateway.application.port.GeneralError;
 import net.example.batchgateway.application.port.ServiceError;
-import net.example.batchgateway.application.port.input.ActivateKeyCommand;
-import net.example.batchgateway.application.port.input.CreateKeyUseCasePort;
-import net.example.batchgateway.application.port.input.DeactivateKeyCommand;
-import net.example.batchgateway.application.port.input.DeactivatePreviousKeyCommand;
-import net.example.batchgateway.application.port.input.FindKeyQuery;
-import net.example.batchgateway.application.port.input.GenerateKeyCommand;
-import net.example.batchgateway.application.port.input.GenerateKeyWithIdCommand;
-import net.example.batchgateway.application.port.input.KeyManagementUseCasePort;
-import net.example.batchgateway.application.port.input.QueryKeyUseCasePort;
+import net.example.batchgateway.application.port.input.*;
 import net.example.batchgateway.config.JwtAuthorization;
 import net.example.utils.dichotomy.Result;
 import org.springframework.http.HttpStatus;
@@ -37,33 +25,24 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.Optional;
 import java.util.UUID;
 
-@Tag(name = "Keys", description = "Keys management APIs")
+@Tag(name = "Batch", description = "Batch management APIs")
 @RestController
-@RequestMapping("/keys")
-public class KeysController {
+@RequestMapping("/batches")
+public class BatchController {
 
-    private final QueryKeyUseCasePort queryKeyUseCase;
-    private final CreateKeyUseCasePort createKeyUseCase;
-    private final KeyManagementUseCasePort keyManagementUseCase;
+    private final QueryBatchUseCasePort queryBatchUseCase;
+    private final CreateBatchUseCasePort createBatchUseCase;
 
-    public KeysController(final QueryKeyUseCasePort queryKeyUseCase,
-                          final CreateKeyUseCasePort createKeyUseCase,
-                          final KeyManagementUseCasePort keyManagementUseCase) {
-        this.queryKeyUseCase = queryKeyUseCase;
-        this.createKeyUseCase = createKeyUseCase;
-        this.keyManagementUseCase = keyManagementUseCase;
+    public BatchController(final QueryBatchUseCasePort queryBatchUseCase,
+                           final CreateBatchUseCasePort createBatchUseCase) {
+        this.queryBatchUseCase = queryBatchUseCase;
+        this.createBatchUseCase = createBatchUseCase;
     }
 
     private static Object errormapper(final GeneralError error) {
@@ -127,7 +106,7 @@ public class KeysController {
                         TenantId.generate(),
                         UserId.generate(),
                         new KeyId(UUID.fromString(keyId))))
-                .biMap(KeysController::okmapper, KeysController::errormapper);
+                .biMap(BatchController::okmapper, BatchController::errormapper);
 
         return ListRevisionsDTO.create(result.expect());
     }
@@ -191,7 +170,7 @@ public class KeysController {
         );
 
         final Result<Key, Object> result = createKeyUseCase.create(command)
-                .mapErr(KeysController::errormapper);
+                .mapErr(BatchController::errormapper);
 
         return ResponseEntity.created(URI.create(result.expect().getId().value().toString())).build();
     }
@@ -255,7 +234,7 @@ public class KeysController {
         );
 
         final Result<Key, Object> result = createKeyUseCase.create(command)
-                .mapErr(KeysController::errormapper);
+                .mapErr(BatchController::errormapper);
 
         return ResponseEntity.created(URI.create(result.expect().getId().value().toString())).build();
     }
@@ -270,7 +249,7 @@ public class KeysController {
         );
 
         keyManagementUseCase.activateKey(command)
-                .mapErr(KeysController::errormapper);
+                .mapErr(BatchController::errormapper);
 
         return ResponseEntity.noContent().build();
     }
@@ -285,7 +264,7 @@ public class KeysController {
         );
 
         keyManagementUseCase.deactivateKey(command)
-                .mapErr(KeysController::errormapper);
+                .mapErr(BatchController::errormapper);
 
         return ResponseEntity.noContent().build();
     }
@@ -300,7 +279,7 @@ public class KeysController {
         );
 
         keyManagementUseCase.deactivatePreviousKey(command)
-                .mapErr(KeysController::errormapper);
+                .mapErr(BatchController::errormapper);
 
         return ResponseEntity.noContent().build();
     }
