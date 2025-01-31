@@ -26,7 +26,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfiguration {
+public class WebSecurityConfig {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -47,7 +47,7 @@ public class WebSecurityConfiguration {
 
 //    https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html
     @Bean
-    public SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
         if (disabledSecurity) {
             logger.warn("############# Security disabled! ##############");
             http
