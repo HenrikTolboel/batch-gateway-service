@@ -23,7 +23,7 @@ import java.util.UUID;
 
 @Tag(name = "Batch", description = "Batch management APIs")
 @RestController
-@RequestMapping("/batches")
+@RequestMapping("/batch")
 public class BatchController {
 
     private final QueryBatchUseCasePort queryBatchUseCase;
