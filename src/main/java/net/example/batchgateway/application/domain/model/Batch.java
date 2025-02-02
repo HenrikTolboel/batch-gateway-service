@@ -1,9 +1,5 @@
 package net.example.batchgateway.application.domain.model;
 
-import net.example.batchgateway.application.domain.model.applicationmodule.ApplicationId;
-import net.example.batchgateway.application.domain.model.applicationmodule.ApplicationName;
-import net.example.batchgateway.application.domain.model.applicationmodule.ApplicationType;
-import net.example.batchgateway.application.domain.model.events.ApplicationCreatedEvent;
 import net.example.batchgateway.application.domain.model.events.BatchCreatedEvent;
 import net.example.batchgateway.application.domain.model.tenantmodule.TenantId;
 

@@ -20,25 +20,17 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class TestContainers {
     @Container
     private static MariaDBContainer mariaDBContainer = new MariaDBContainer<>("mariadb:latest");
-    @Container
-    private static MinIOContainer minIOContainer = new MinIOContainer("minio/minio:latest");
-    @Container
-    private static RedisContainer redisContainer = new RedisContainer(RedisContainer.DEFAULT_IMAGE_NAME.withTag(RedisContainer.DEFAULT_TAG));
 
     @BeforeAll
     @JvmStatic
     public static void beforeAll() {
         mariaDBContainer.start();
-        minIOContainer.start();
-        redisContainer.start();
     }
 
     @AfterAll
     @JvmStatic
     public static void afterAll() {
         mariaDBContainer.stop();
-        minIOContainer.stop();
-        redisContainer.stop();
     }
 
     @DynamicPropertySource
@@ -47,18 +39,7 @@ public class TestContainers {
         registry.add("spring.datasource.url", mariaDBContainer::getJdbcUrl);
         registry.add("spring.datasource.username", mariaDBContainer::getUsername);
         registry.add("spring.datasource.password", mariaDBContainer::getPassword);
-        registry.add("minio.url", minIOContainer::getS3URL);
-        registry.add("minio.access.key", minIOContainer::getUserName);
-        registry.add("minio.access.secret", minIOContainer::getPassword);
-        registry.add("spring.data.redis.url", redisContainer::getRedisURI);
     }
 
-    public static MinioClient minioClient() {
-        return MinioClient
-                .builder()
-                .endpoint(minIOContainer.getS3URL())
-                .credentials(minIOContainer.getUserName(), minIOContainer.getPassword())
-                .build();
-    }
 }
 

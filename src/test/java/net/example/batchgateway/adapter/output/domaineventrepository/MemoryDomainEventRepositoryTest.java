@@ -2,15 +2,12 @@ package net.example.batchgateway.adapter.output.domaineventrepository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.example.batchgateway.application.domain.model.applicationmodule.Application;
-import net.example.batchgateway.application.domain.model.applicationmodule.ApplicationId;
-import net.example.batchgateway.application.domain.model.applicationmodule.ApplicationName;
-import net.example.batchgateway.application.domain.model.applicationmodule.ApplicationType;
-import net.example.batchgateway.application.domain.model.applicationmodule.ApplicationTypeEnum;
-import net.example.batchgateway.application.domain.model.tenantmodule.TenantId;
-import net.example.batchgateway.application.domain.model.events.ApplicationCreatedEvent;
+import net.example.batchgateway.application.domain.model.Batch;
+import net.example.batchgateway.application.domain.model.BatchId;
+import net.example.batchgateway.application.domain.model.BatchName;
+import net.example.batchgateway.application.domain.model.events.BatchCreatedEvent;
 import net.example.batchgateway.application.domain.model.events.DomainEvent;
-import net.example.batchgateway.application.domain.model.events.ItemIdAddedToUser;
+import net.example.batchgateway.application.domain.model.tenantmodule.TenantId;
 import net.example.batchgateway.application.port.GeneralError;
 import net.example.batchgateway.application.port.output.DomainEventRepositoryPort;
 import net.example.batchgateway.config.SpringBootObjectMapper;
@@ -20,7 +17,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MemoryDomainEventRepositoryTest {
 
@@ -34,7 +34,7 @@ class MemoryDomainEventRepositoryTest {
     @Test
     void save() {
 
-        final ApplicationCreatedEvent event = new ApplicationCreatedEvent(ApplicationId.generate());
+        final BatchCreatedEvent event = new BatchCreatedEvent(BatchId.generate());
 
         final Result<Empty, GeneralError> saveRes = repository.save(event);
 
@@ -51,13 +51,10 @@ class MemoryDomainEventRepositoryTest {
     @Test
     void testEvent() {
 
-        final Application application = Application.create(ApplicationName.create("appName"),
-                TenantId.generate(),
-                ApplicationType.create(ApplicationTypeEnum.CQL));
+        final Batch application = Batch.create(BatchName.create("appName"),
+                TenantId.generate());
 
-        final var event = new ItemIdAddedToUser("ItemId",
-                1234L,
-                application);
+        final var event = new BatchCreatedEvent(BatchId.generate());
 
         final String json;
         try {
@@ -74,10 +71,10 @@ class MemoryDomainEventRepositoryTest {
             throw new RuntimeException(e);
         }
 
-        Application back  = ((ItemIdAddedToUser)result).getApplication();
+        BatchId back  = ((BatchCreatedEvent)result).getBatchId();
 
-        assertInstanceOf(ItemIdAddedToUser.class, result);
+        assertInstanceOf(BatchCreatedEvent.class, result);
 
-        assertEquals(application, back);
+        assertEquals(event.getBatchId(), back);
     }
 }
