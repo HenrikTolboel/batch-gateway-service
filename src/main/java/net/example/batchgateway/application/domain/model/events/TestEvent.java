@@ -6,18 +6,18 @@ import net.example.batchgateway.application.domain.model.usermodule.UserId;
 
 import java.time.Instant;
 
-public class UserDeletedEvent extends DomainEvent {
+public class TestEvent extends DomainEvent {
     private final UserId userId;
 
-    public UserDeletedEvent(final UserId userId) {
+    public TestEvent(final UserId userId) {
         super();
         this.userId = userId;
     }
 
     @JsonCreator
-    UserDeletedEvent(final @JsonProperty("domainEventId") DomainEventId domainEventId,
-                     final @JsonProperty("timestamp") Instant timestamp,
-                     final @JsonProperty("userId") UserId userId) {
+    protected TestEvent(final @JsonProperty("domainEventId") DomainEventId domainEventId,
+                        final @JsonProperty("timestamp") Instant timestamp,
+                        final @JsonProperty("userId") UserId userId) {
         super(domainEventId, timestamp);
         this.userId = userId;
     }

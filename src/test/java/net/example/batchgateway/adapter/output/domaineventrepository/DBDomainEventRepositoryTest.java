@@ -3,7 +3,7 @@ package net.example.batchgateway.adapter.output.domaineventrepository;
 import net.example.batchgateway.adapter.output.TestContainers;
 import net.example.batchgateway.application.domain.model.events.DomainEvent;
 import net.example.batchgateway.application.domain.model.usermodule.UserId;
-import net.example.batchgateway.application.domain.model.events.UserTestEvent;
+import net.example.batchgateway.application.domain.model.events.TestEvent;
 import net.example.batchgateway.application.port.GeneralError;
 import net.example.batchgateway.application.port.output.DomainEventRepositoryPort;
 import net.example.batchgateway.config.SpringBootObjectMapper;
@@ -47,7 +47,7 @@ class DBDomainEventRepositoryTest extends TestContainers {
 
         final DomainEventRepositoryPort repository = new DBDomainEventRepository(SpringBootObjectMapper.getObjectMapper(), namedParameterJdbcTemplate);
 
-        final UserTestEvent event = new UserTestEvent(UserId.generate());
+        final TestEvent event = new TestEvent(UserId.generate());
 
         final Result<Empty, GeneralError> resSave = repository.save(event);
 
@@ -58,6 +58,6 @@ class DBDomainEventRepositoryTest extends TestContainers {
         assertEquals(1, res10.expect().size());
         assertEquals(event.getDomainEventId(), res10.expect().getFirst().getDomainEventId());
         assertEquals(event.getTimestamp(), res10.expect().getFirst().getTimestamp());
-        assertEquals(event.getUserId(), ((UserTestEvent)res10.expect().getFirst()).getUserId());
+        assertEquals(event.getUserId(), ((TestEvent)res10.expect().getFirst()).getUserId());
     }
 }
