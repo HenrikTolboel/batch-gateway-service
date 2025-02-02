@@ -195,7 +195,7 @@ configurations {
 }
 
 pmd {
-    isConsoleOutput = true
+    isConsoleOutput = false
     toolVersion = libs.versions.pmdplugin.get()
     rulesMinimumPriority = 5
     isIgnoreFailures = true // TODO: temporary dont fail build on PMD
