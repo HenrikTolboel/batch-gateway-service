@@ -21,18 +21,6 @@ services:
     ports:
       - 8082:8080
 
-  minio:
-    image: minio/minio:latest
-    ports:
-      - 9000:9000
-      - 9001:9001
-    volumes:
-      - minio_data:/data
-    environment:
-      MINIO_ROOT_USER: henrik
-      MINIO_ROOT_PASSWORD: secret123
-    command: server --console-address ":9001" /data
-
   jaeger:
     image: jaegertracing/all-in-one:latest
     ports:
@@ -64,7 +52,6 @@ services:
 
 
 volumes:
-  minio_data:
   mariadb_data:
   prometheus_data:
   grafana_data:
