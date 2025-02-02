@@ -61,7 +61,7 @@ public class BatchController {
 
     private static Batch okmapper(final Optional<Batch> optionalBatch) {
         if (optionalBatch.isEmpty()) {
-            throw new ProblemDetailException(HttpStatus.NOT_FOUND, "Key not found", URI.create("info:key-not-found"));
+            throw new ProblemDetailException(HttpStatus.NOT_FOUND, "Batch not found", URI.create("info:batch-not-found"));
         }
         return optionalBatch.get();
     }
@@ -153,7 +153,6 @@ public class BatchController {
 
             }
     )
-//    @PostMapping(params = "xmlType=GenerateDTO")
     @PostMapping
     @JwtAuthorization(acceptNoAuthorizationHeader = true)
     public ResponseEntity<Object> create(@RequestBody final CreateBatchDTO createBatchDTO) {
