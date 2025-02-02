@@ -1,2 +1,2 @@
-# key-manager-service
+# batch-gateway-service
 
