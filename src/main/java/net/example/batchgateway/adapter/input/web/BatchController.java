@@ -1,12 +1,5 @@
 package net.example.batchgateway.adapter.input.web;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.headers.Header;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import net.example.batchgateway.adapter.input.web.dto.CreateBatchDTO;
 import net.example.batchgateway.adapter.input.web.dto.ViewBatchDTO;
@@ -19,11 +12,8 @@ import net.example.batchgateway.application.port.DomainError;
 import net.example.batchgateway.application.port.GeneralError;
 import net.example.batchgateway.application.port.ServiceError;
 import net.example.batchgateway.application.port.input.*;
-import net.example.batchgateway.config.JwtAuthorization;
 import net.example.utils.dichotomy.Result;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -99,7 +89,6 @@ public class BatchController {
 //            }
 //    )
     @GetMapping("/{keyId}/listRevisions")
-    @JwtAuthorization(acceptNoAuthorizationHeader = true)
     public ViewBatchDTO listRevisions(final @PathVariable String batchId) {
 
         final Result<Batch, Object> result = queryBatchUseCase.findBatchById(new FindBatchQuery(
@@ -152,7 +141,6 @@ public class BatchController {
 //            }
 //    )
     @PostMapping
-    @JwtAuthorization(acceptNoAuthorizationHeader = true)
     public ResponseEntity<Object> create(@RequestBody final CreateBatchDTO createBatchDTO) {
 
         final CreateBatchCommand command = new CreateBatchCommand(

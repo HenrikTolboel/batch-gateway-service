@@ -26,7 +26,6 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-//    implementation(libs.bundles.springBoot)
     implementation("org.springframework.boot:spring-boot-starter-log4j2")
     implementation("org.apache.logging.log4j:log4j-spring-cloud-config-client")
     implementation("org.apache.logging.log4j:log4j-api")
@@ -34,7 +33,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
 
-    implementation("org.springframework.boot:spring-boot-starter-security")
+//    implementation("org.springframework.boot:spring-boot-starter-security")
 
     implementation("org.springframework.cloud:spring-cloud-starter-config")
 
@@ -66,7 +65,6 @@ dependencies {
     implementation(libs.minio)
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
-//    implementation(libs.keycloakAdminClient)
     implementation("org.springframework.retry:spring-retry")
 
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
@@ -78,8 +76,6 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:mariadb")
-    testImplementation("org.testcontainers:minio")
-    testImplementation(libs.redistestcontainers)
 
 //    implementation("org.springframework.boot:spring-boot-starter-cache")
 
