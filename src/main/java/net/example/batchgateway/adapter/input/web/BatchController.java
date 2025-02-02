@@ -9,8 +9,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import net.example.batchgateway.adapter.input.web.dto.CreateBatchDTO;
-import net.example.batchgateway.adapter.input.web.dto.GenerateDTO;
-import net.example.batchgateway.adapter.input.web.dto.ListRevisionsDTO;
 import net.example.batchgateway.adapter.input.web.dto.ViewBatchDTO;
 import net.example.batchgateway.application.domain.model.Batch;
 import net.example.batchgateway.application.domain.model.BatchId;
@@ -67,39 +65,39 @@ public class BatchController {
     }
 
 
-    @Operation(
-//            tags = {"keys", "otherkeys"},
-            summary = "Get list of revisions for specified Key",
-            description = "a description given",
-            parameters = {
-                    @Parameter(name = "applicationType",
-                            required = true)
-            },
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Revisions for specified Key returned",
-                            content = {
-                                    @Content(mediaType = "application/json",
-                                            schema = @Schema(implementation = ListRevisionsDTO.class),
-                                            examples = @ExampleObject("{\"list\": \"value\"}")
-//                                            array = @ArraySchema(schema = @Schema(implementation = ListRevisionsDTO.RevisionDTO.class))
-                                    )
-                            }
-                    ),
-                    @ApiResponse(responseCode = "400", description = "Bad Request",
-                            content = {
-                                    @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
-                                            schema = @Schema(implementation = ProblemDetail.class))
-                            }
-                    ),
-                    @ApiResponse(responseCode = "404", description = "Specified Key not found",
-                            content = {
-                                    @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
-                                            schema = @Schema(implementation = ProblemDetail.class))
-                            }
-                    )
-
-            }
-    )
+//    @Operation(
+////            tags = {"keys", "otherkeys"},
+//            summary = "Get list of revisions for specified Key",
+//            description = "a description given",
+//            parameters = {
+//                    @Parameter(name = "applicationType",
+//                            required = true)
+//            },
+//            responses = {
+//                    @ApiResponse(responseCode = "200", description = "Revisions for specified Key returned",
+//                            content = {
+//                                    @Content(mediaType = "application/json",
+//                                            schema = @Schema(implementation = ListRevisionsDTO.class),
+//                                            examples = @ExampleObject("{\"list\": \"value\"}")
+////                                            array = @ArraySchema(schema = @Schema(implementation = ListRevisionsDTO.RevisionDTO.class))
+//                                    )
+//                            }
+//                    ),
+//                    @ApiResponse(responseCode = "400", description = "Bad Request",
+//                            content = {
+//                                    @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+//                                            schema = @Schema(implementation = ProblemDetail.class))
+//                            }
+//                    ),
+//                    @ApiResponse(responseCode = "404", description = "Specified Key not found",
+//                            content = {
+//                                    @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+//                                            schema = @Schema(implementation = ProblemDetail.class))
+//                            }
+//                    )
+//
+//            }
+//    )
     @GetMapping("/{keyId}/listRevisions")
     @JwtAuthorization(acceptNoAuthorizationHeader = true)
     public ViewBatchDTO listRevisions(final @PathVariable String batchId) {
@@ -114,45 +112,45 @@ public class BatchController {
     }
 
 
-    @Operation(
-            summary = "Generate Key",
-            description = "a description given",
-//            parameters = {
-//                    @Parameter(name = "applicationType",
-//                            required = true)
-//            },
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(
-                                    implementation = GenerateDTO.class
-                            )
-                    ),
-                    required = true
-            ),
-            responses = {
-                    @ApiResponse(responseCode = "201", description = "Key Created",
-                            headers = {
-                                    @Header(name = "Location", description = "Id of created Key")
-                            },
-                            content = {@Content}
-                    ),
-                    @ApiResponse(responseCode = "400", description = "Bad Request",
-                            content = {
-                                    @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
-                                            schema = @Schema(implementation = ProblemDetail.class))
-                            }
-
-                    ),
-                    @ApiResponse(responseCode = "404", description = "Specified Key not found",
-                            content = {
-                                    @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
-                                            schema = @Schema(implementation = ProblemDetail.class))
-                            }
-                    )
-
-            }
-    )
+//    @Operation(
+//            summary = "Generate Key",
+//            description = "a description given",
+////            parameters = {
+////                    @Parameter(name = "applicationType",
+////                            required = true)
+////            },
+//            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+//                    content = @Content(
+//                            mediaType = "application/json",
+//                            schema = @Schema(
+//                                    implementation = GenerateDTO.class
+//                            )
+//                    ),
+//                    required = true
+//            ),
+//            responses = {
+//                    @ApiResponse(responseCode = "201", description = "Key Created",
+//                            headers = {
+//                                    @Header(name = "Location", description = "Id of created Key")
+//                            },
+//                            content = {@Content}
+//                    ),
+//                    @ApiResponse(responseCode = "400", description = "Bad Request",
+//                            content = {
+//                                    @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+//                                            schema = @Schema(implementation = ProblemDetail.class))
+//                            }
+//
+//                    ),
+//                    @ApiResponse(responseCode = "404", description = "Specified Key not found",
+//                            content = {
+//                                    @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+//                                            schema = @Schema(implementation = ProblemDetail.class))
+//                            }
+//                    )
+//
+//            }
+//    )
     @PostMapping
     @JwtAuthorization(acceptNoAuthorizationHeader = true)
     public ResponseEntity<Object> create(@RequestBody final CreateBatchDTO createBatchDTO) {
